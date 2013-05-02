@@ -10,11 +10,11 @@ uses
 var i:Integer;
 
 
-procedure capture_output (command:string; output:TStringList);
+procedure capture_output (command:string; output:TStringList; dir:string);
 var
   exitCode: longword;
 begin
-    if DSiExecuteAndCapture(command, output, '', exitCode) = 0 then
+    if DSiExecuteAndCapture(command, output, dir, exitCode) = 0 then
      ShowMessage('Cannot start');
 
 end;
@@ -63,7 +63,7 @@ begin
 sub:= StringReplace(ExtractFileName(s),ExtractFileExt(s),'',[rfReplaceAll, rfIgnoreCase]);
   output := TStringList.Create;
       try
-                capture_output ('7z x -o'+sub +' ' +s, output);
+                capture_output ('7z x -o'+sub +' "' +s+'"', output,ExtractFilePath(s));
 //                    for i:=0 to output.Count -1 do
 //                        form1.Memo1.Lines.Add(output.Strings[i]);
 
@@ -78,7 +78,7 @@ var
 begin
   output := TStringList.Create;
       try
-                capture_output ('7z x ' +s, output);
+                capture_output ('7z x "' +s+'"', output,ExtractFilePath(s));
 //                    for i:=0 to output.Count -1 do
 //                        form1.Memo1.Lines.Add(output.Strings[i]);
 
@@ -122,10 +122,10 @@ begin
 
   try
 //    form1.Memo1.Lines.Clear;
-    capture_output ('7z l '+s , output);
+    capture_output ('7z l "'+s +'"', output,ExtractFilePath(s));
     for i:=0 to output.Count -1 do
     begin
-
+          // ShowMessage(output.Strings[i] );
 
       if output.Strings[i] = '------------------- ----- ------------ ------------  ------------------------' then
         flag:=not flag
@@ -156,5 +156,9 @@ end;
 begin
 for i := 0 to ParamCount do
  if i = 1 then
+ begin
+
+//  ShowMessage(ParamStr(i));
    superunpack2(ParamStr(i));
+   end;
 end.
